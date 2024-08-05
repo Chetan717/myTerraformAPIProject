@@ -1,4 +1,3 @@
-
 variable "vpc_cidr" {}
 variable "vpc_name" {}
 variable "cidr_public_subnet" {}
@@ -9,12 +8,12 @@ output "flask_api_vpcid" {
   value = aws_vpc.flask-api-terraform-cicd.id
 }
 
-output "dev_proj_public_subnet" {
-    value = aws_subnet.publicsubnet-dev-proj.id.*.id
-}
-output "public_subnet-cidr_block" {
-    value = aws_subnet.privatesubnet-dev-proj.*.cidr_block
-}
+ output "dev_proj_public_subnet" {
+     value = aws_subnet.publicsubnet-dev-proj.*.id
+ }
+ output "public_subnet-cidr_block" {
+     value = aws_subnet.privatesubnet-dev-proj.*.cidr_block
+ }
 
 resource "aws_vpc" "flask-api-terraform-cicd" {
   cidr_block = var.vpc_cidr
@@ -51,7 +50,6 @@ resource "aws_internet_gateway" "ingetway-publicsubnet-dev-proj" {
   }
 }
 
-
 # public subnet route table
 resource "aws_route_table" "publicsubnet-dev-proj-routetable" {
     vpc_id = aws_vpc.flask-api-terraform-cicd.id
@@ -67,17 +65,23 @@ resource "aws_route_table" "publicsubnet-dev-proj-routetable" {
   
 }
 
-# public subnet route table association
-resource "aws_route_table_association" "devProjpublicsubnet" {
-    count = length(aws_subnet.publicsubnet-dev-proj)
-    subnet_id = aws_subnet.publicsubnet-dev-proj.id[count.index].id
-    route_table_id = aws_route_table.dev-proj-routetable.id
+# public subnet route table
+resource "aws_route_table" "publicsubnet-dev717-proj-routetable" {
+    vpc_id = aws_vpc.flask-api-terraform-cicd.id
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.ingetway-publicsubnet-dev-proj.id
+    }
+
+    tags = {
+      Name = "route-table-devProj"
+    }
   
 }
 
-
 # private subnate route table
-resource "aws_route_table" "privatesubnet-dev-routetable" {
+resource "aws_route_table" "privatesubnet-dev717-routetable" {
     vpc_id = aws_vpc.flask-api-terraform-cicd.id
    
    tags = {
@@ -86,9 +90,17 @@ resource "aws_route_table" "privatesubnet-dev-routetable" {
   
 }
 
+
+# public subnet route table association
+resource "aws_route_table_association" "devProjpublicsubnet" {
+    count = length(aws_subnet.publicsubnet-dev-proj)
+    subnet_id = aws_subnet.publicsubnet-dev-proj[count.index].id
+    route_table_id = aws_route_table.publicsubnet-dev717-proj-routetable.id     
+}
+
 # private route table association
 resource "aws_route_table_association" "privatesubnet-routetable-association" {
     count = length(aws_subnet.privatesubnet-dev-proj)
     subnet_id = aws_subnet.privatesubnet-dev-proj[count.index].id
-    route_table_id = aws_route_table.privatesubnet-dev-routetable.id
+    route_table_id = aws_route_table.privatesubnet-dev717-routetable.id
 }

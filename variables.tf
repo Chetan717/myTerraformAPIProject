@@ -40,6 +40,12 @@ variable "ec2_ami_id" {
   
 }
 
+variable "ec2_" {
+    type = string
+    description = "emiid for create ec2 instance"
+  
+}
+
 variable "instance_type" {
     type = string
     description = "instance type for ec2 instance"
