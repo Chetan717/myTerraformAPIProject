@@ -7,7 +7,7 @@ output "output_id_sg_http_ssh" {
 }
 
 output "output_id_sg_jenkinsport_group" {
-  value = aws_security_group.sg_jenkinsPort_group
+  value = aws_security_group.sg_jenkinsPort_group.id
 }
 
 resource "aws_security_group" "sg_http_ssh" {

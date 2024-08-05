@@ -22,7 +22,16 @@ module "jenkinsServer" {
     tag_name = "jenkins:server"
     public_key = var.public_key
     subnet_id = tolist(module.networking.dev_proj_public_subnet)[0]
-    sg_for_jenkins = [module.securitygroup.output_id_sg_jenkinsport, module.securitygroup.output_id_sg_http_ssh]
+    sg_for_jenkins = [module.securitygroup.output_id_sg_jenkinsport_group, module.securitygroup.output_id_sg_http_ssh]
     enable_public_ip_address = true
     user_data_install_jenkins = templatefile("./jenkinsSer_userdata/jenkinsinstall.sh",{})
+}
+
+module "targetgroup" {
+    source = "./lbtargetgroup"
+    lb_target_group_name = ""
+    lb_target_group_port = ""
+    lb_target_group_protocol = ""
+    vpc_id = module.networking.flask_api_vpcid
+    ec2_instance_id = module.jenkinsServer.jenkinsSererid  
 }
