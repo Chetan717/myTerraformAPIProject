@@ -28,6 +28,10 @@ variable "vpc_az" {
   type = list(string)
   description = "Availability zone"
 }
+variable "vpc_sg_allowports" {
+  type = list(number)
+  description = "security group allow ports"
+}
 
 variable "public_key" {
   type = string

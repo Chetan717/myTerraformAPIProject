@@ -12,6 +12,7 @@ module "securitygroup" {
  ec2_sg_name = "security group for allow traffic"
  vpc_id = module.networking.flask_api_vpcid
  ec2_jenkins_sg_name = "Allow port 8080 for jenkins"
+ vpc_sg_allowports = var.vpc_sg_allowports
   
 }
 
@@ -27,11 +28,11 @@ module "jenkinsServer" {
     user_data_install_jenkins = templatefile("./jenkinsSer_userdata/jenkinsinstall.sh",{})
 }
 
-module "targetgroup" {
-    source = "./lbtargetgroup"
-    lb_target_group_name = ""
-    lb_target_group_port = ""
-    lb_target_group_protocol = ""
-    vpc_id = module.networking.flask_api_vpcid
-    ec2_instance_id = module.jenkinsServer.jenkinsSererid  
-}
+# module "targetgroup" {
+#     source = "./lbtargetgroup"
+#     lb_target_group_name = ""
+#     lb_target_group_port = ""
+#     lb_target_group_protocol = ""
+#     vpc_id = module.networking.flask_api_vpcid
+#     ec2_instance_id = module.jenkinsServer.jenkinsSererid  
+# }

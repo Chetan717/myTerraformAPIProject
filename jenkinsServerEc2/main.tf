@@ -10,7 +10,6 @@ variable "enable_public_ip_address" {}
 variable "user_data_install_jenkins" {}
 output "jenkinsSererid" {
     value = aws_instance.jenkins_ec2_instance_ip_flaskapi.id
-  
 }
 
 resource "aws_key_pair" "jenkinsinstance_key" {

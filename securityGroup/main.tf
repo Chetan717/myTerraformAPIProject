@@ -1,7 +1,9 @@
 variable "ec2_sg_name" {}
 variable "vpc_id" {}
 variable "ec2_jenkins_sg_name" {}
-
+variable "vpc_sg_allowports" {
+    type = list(number)
+}
 output "output_id_sg_http_ssh" {
   value = aws_security_group.sg_http_ssh.id
 }
@@ -15,25 +17,14 @@ resource "aws_security_group" "sg_http_ssh" {
   description = "Enable the Port 22(SSH) & Port 80(http)"
   vpc_id = var.vpc_id
 
-  ingress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port = 22
-    to_port = 22
+  ingress = [
+    for port in var.vpc_sg_allowports : {
+      cidr_blocks = ["0.0.0.0/0"]
+    from_port = port
+    to_port = port
     protocol = "tcp"
-  }
-
- ingress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-  }
-   ingress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-  }
+    }
+  ]
 
   egress {
     from_port = 0
@@ -55,6 +46,12 @@ resource "aws_security_group" "sg_jenkinsPort_group" {
     cidr_blocks = ["0.0.0.0/0"]
     from_port = 8080
     to_port = 8080
+    protocol = "tcp"
+   }
+   ingress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 9000
+    to_port = 9000
     protocol = "tcp"
    }
 
